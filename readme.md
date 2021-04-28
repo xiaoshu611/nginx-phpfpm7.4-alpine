@@ -43,8 +43,8 @@ sodium
 SPL
 sqlite3
 standard
-swoole
 tokenizer
+xlswriter
 xml
 xmlreader
 xmlwriter

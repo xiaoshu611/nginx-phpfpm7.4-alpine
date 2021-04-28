@@ -14,16 +14,16 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 RUN set -ex \
     && apk update \
     && apk add --no-cache libstdc++ wget openssl bash supervisor nginx \
-        libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev
+        libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev \
+        freetype-dev libjpeg-turbo-dev libpng-dev \
 
 RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
     libtool dpkg-dev dpkg pkgconf file re2c pcre-dev php7-dev php7-pear openssl-dev \
-    freetype freetype-dev libjpeg-turbo libjpeg-turbo-dev libpng libpng-dev \
 
-    && docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
 
     # 安装php常用扩展
-    && docker-php-ext-install -j${NPROC} gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
+    && docker-php-ext-install -j$(nproc) gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
 
     # Extension redis mcrypt mongodb rdkafka
     && pecl install redis mcrypt mongodb rdkafka \
