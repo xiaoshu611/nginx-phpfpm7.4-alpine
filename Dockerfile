@@ -53,10 +53,6 @@ RUN wget https://wesociastg.blob.core.chinacloudapi.cn/wesocial-uat/gocron-node-
     && tar -zxvf gocron-node-v1.5.3-linux-amd64.tar.gz && rm -rf gocron-node-v1.5.3-linux-amd64.tar.gz \
     && mv gocron-node-linux-amd64/gocron-node /usr/bin/gocron-node && rm -rf gocron-linux-amd64
 
-COPY entrypoint.sh /root/
-
-RUN chmod +x /root/entrypoint.sh
-
 COPY config/supervisord/supervisord.conf /etc/supervisord.conf
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
