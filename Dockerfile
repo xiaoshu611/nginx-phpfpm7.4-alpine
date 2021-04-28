@@ -14,8 +14,8 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 RUN set -ex \
     && apk update \
     && apk add --no-cache libstdc++ wget openssl bash supervisor nginx \
-        libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev \
-        freetype-dev libjpeg-turbo-dev libpng-dev \
+       libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev \
+       freetype-dev libjpeg-turbo-dev libpng-dev
 
 RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
     libtool dpkg-dev dpkg pkgconf file re2c pcre-dev php7-dev php7-pear openssl-dev \
@@ -57,7 +57,8 @@ COPY config/supervisord/supervisord.conf /etc/supervisord.conf
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY config/php/php-fpm.conf /usr/local/etc/php-fpm.conf
-ADD index.php /usr/share/nginx/html/src/public/
+COPY config/php/php.ini /usr/local/etc/php/
+COPY index.php /usr/share/nginx/html/src/public/
 
 EXPOSE 80 5921
 
