@@ -13,15 +13,17 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 # update
 RUN set -ex \
     && apk update \
-    && apk add --no-cache libstdc++ wget openssl bash supervisor nginx
+    && apk add --no-cache libstdc++ wget openssl bash supervisor nginx \
+        libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev
 
 RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
     libtool dpkg-dev dpkg pkgconf file re2c pcre-dev php7-dev php7-pear openssl-dev \
+    freetype freetype-dev libjpeg-turbo libjpeg-turbo-dev libpng libpng-dev \
 
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
 
     # 安装php常用扩展
-    && docker-php-ext-install gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
+    && docker-php-ext-install -j${NPROC} gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
 
     # Extension redis mcrypt mongodb rdkafka
     && pecl install redis mcrypt mongodb rdkafka \
@@ -47,6 +49,10 @@ RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
     && rm -rf /var/cache/apk/* /tmp/* /usr/share/man \
     && php -m
 
+RUN wget https://wesociastg.blob.core.chinacloudapi.cn/wesocial-uat/gocron-node-v1.5.3-linux-amd64.tar.gz \
+    && tar -zxvf gocron-node-v1.5.3-linux-amd64.tar.gz && rm -rf gocron-node-v1.5.3-linux-amd64.tar.gz \
+    && mv gocron-node-linux-amd64/gocron-node /usr/bin/gocron-node && rm -rf gocron-linux-amd64
+
 COPY entrypoint.sh /root/
 
 RUN chmod +x /root/entrypoint.sh
@@ -57,6 +63,6 @@ COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY config/php/php-fpm.conf /usr/local/etc/php-fpm.conf
 ADD index.php /usr/share/nginx/html/src/public/
 
-EXPOSE 80
+EXPOSE 80 5921
 
-CMD ["/root/entrypoint.sh"]
+CMD ["supervisord","-c","/etc/supervisord.conf"]
