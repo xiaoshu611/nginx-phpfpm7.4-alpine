@@ -49,16 +49,21 @@ RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
     && rm -rf /var/cache/apk/* /tmp/* /usr/share/man \
     && php -m
 
+# 下载gocron客户端
 RUN wget https://wesociastg.blob.core.chinacloudapi.cn/wesocial-uat/gocron-node-v1.5.3-linux-amd64.tar.gz \
     && tar -zxvf gocron-node-v1.5.3-linux-amd64.tar.gz && rm -rf gocron-node-v1.5.3-linux-amd64.tar.gz \
-    && mv gocron-node-linux-amd64/gocron-node /usr/bin/gocron-node && rm -rf gocron-linux-amd64
+    && mv gocron-node-linux-amd64/gocron-node /usr/bin/gocron-node && rm -rf /var/www/html/*
 
 COPY config/supervisord/supervisord.conf /etc/supervisord.conf
+COPY config/supervisord/conf.d/* /etc/supervisor/conf.d/
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY config/php/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY config/php/php.ini /usr/local/etc/php/
+
 COPY index.php /usr/share/nginx/html/src/public/
+
+WORKDIR /usr/share/nginx/html/
 
 EXPOSE 80 5921
 
