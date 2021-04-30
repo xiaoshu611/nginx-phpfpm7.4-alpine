@@ -67,4 +67,4 @@ WORKDIR /usr/share/nginx/html/
 
 EXPOSE 80 5921
 
-CMD ["supervisord","-c","/etc/supervisord.conf"]
+ENTRYPOINT ["supervisord","-c","/etc/supervisord.conf"]
