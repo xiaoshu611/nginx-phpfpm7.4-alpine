@@ -6,14 +6,21 @@ ENV XLSWRITER_VERSION=1.3.7
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+RUN apk update openssh tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && mkdir -p /run/nginx
 
+RUN sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config \
+    && ssh-keygen -t dsa -P "" -f /etc/ssh/ssh_host_dsa_key \
+    && ssh-keygen -t rsa -P "" -f /etc/ssh/ssh_host_rsa_key \
+    && ssh-keygen -t ecdsa -P "" -f /etc/ssh/ssh_host_ecdsa_key \
+    && ssh-keygen -t ed25519 -P "" -f /etc/ssh/ssh_host_ed25519_key \
+    && echo "root:admin" | chpasswd
+
 # update
 RUN set -ex \
-    && apk update \
-    && apk add --no-cache libstdc++ wget openssl bash supervisor nginx \
+    apk add --no-cache libstdc++ wget openssl bash supervisor nginx \
        libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev \
        freetype-dev libjpeg-turbo-dev libpng-dev
 
@@ -65,6 +72,6 @@ COPY index.php /usr/share/nginx/html/src/public/
 
 WORKDIR /usr/share/nginx/html/
 
-EXPOSE 80 5921
+EXPOSE 80 5921 22
 
 ENTRYPOINT ["supervisord","-c","/etc/supervisord.conf"]
