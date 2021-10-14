@@ -31,8 +31,13 @@ RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
     # 安装php常用扩展
     && docker-php-ext-install -j$(nproc) gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
+    && wget http://pecl.php.net/get/redis-5.3.4.tgz \
+    && wget http://pecl.php.net/get/mcrypt-1.0.4.tgz \
+    && wget http://pecl.php.net/get/mongodb-1.10.0.tgz \
+    && wget http://pecl.php.net/get/rdkafka-5.0.0.tgz \
     # Extension redis mcrypt mongodb rdkafka
-    && pecl install redis mcrypt mongodb rdkafka \
+    && pecl install redis-5.3.4.tgz mcrypt-1.0.4.tgz mongodb-1.10.0.tgz rdkafka-5.0.0.tgz \
+    && rm -rf redis-5.3.4.tgz mcrypt-1.0.4.tgz mongodb-1.10.0.tgz rdkafka-5.0.0.tgz \
     && docker-php-ext-enable redis mcrypt mongodb rdkafka \
     # 安装 Composer
     && wget https://mirrors.cloud.tencent.com/composer/composer.phar \
