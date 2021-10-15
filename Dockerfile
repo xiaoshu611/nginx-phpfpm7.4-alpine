@@ -15,6 +15,7 @@ RUN apk update \
 
 # 安装ssh
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config \
     && ssh-keygen -t dsa -P "" -f /etc/ssh/ssh_host_dsa_key \
     && ssh-keygen -t rsa -P "" -f /etc/ssh/ssh_host_rsa_key \
     && ssh-keygen -t ecdsa -P "" -f /etc/ssh/ssh_host_ecdsa_key \
