@@ -6,6 +6,7 @@ variables:
   PROJECT_NAME: nginx-phpfpm
   COMMIT_BRANCH_NAME: ${CI_COMMIT_REF_NAME}
   PIPELINE_ID: ${CI_PIPELINE_ID}
+
 build:
   stage: build
   tags:
@@ -16,12 +17,13 @@ build:
     - ls -la
   only:
     - master
-deploy_test:
+
+deploy:
   stage: deploy_test
   tags:
       - nginx-phpfpm
   script:
-    - echo ${PROJECT_NAME} ${COMMIT_BRANCH_NAME} ${PIPELINE_ID}
+    - echo $PROJECT_NAME $COMMIT_BRANCH_NAME $PIPELINE_ID
     - docker ps
     - docker images
   only:
