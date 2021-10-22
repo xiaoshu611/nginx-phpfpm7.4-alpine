@@ -1,7 +1,7 @@
 stages:
   - build
   - deploy_test
-  -
+
 variables:
   PROJECT_NAME: nginx-phpfpm
 build:
