@@ -9,7 +9,10 @@ build:
   tags:
     - nginx-phpfpm
   script:
-    - echo 11111111111
+    - echo 构建
+    - pwd
+    - ls -la
+    - docker build test:1.0
   only:
     - master
 deploy_test:
@@ -18,5 +21,9 @@ deploy_test:
       - nginx-phpfpm
   script:
     - echo 2222222222
+    - pwd
+    - ls -la
+    - docker ps
+    - docker images
   only:
     - master
