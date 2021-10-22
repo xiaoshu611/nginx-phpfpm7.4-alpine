@@ -4,6 +4,8 @@ stages:
 
 variables:
   PROJECT_NAME: nginx-phpfpm
+  COMMIT_BRANCH_NAME: ${CI_COMMIT_REF_NAME}
+  PIPELINE_ID: ${CI_PIPELINE_ID}
 build:
   stage: build
   tags:
@@ -20,7 +22,9 @@ deploy_test:
   tags:
       - nginx-phpfpm
   script:
-    - echo 2222222222
+    - echo 测试
+    - docker info
+    - apt update
     - pwd
     - ls -la
     - docker ps
