@@ -12,7 +12,7 @@ build:
     - echo 构建
     - pwd
     - ls -la
-    - docker build test:1.0
+    - docker build -t test:1.0 .
   only:
     - master
 deploy_test:
