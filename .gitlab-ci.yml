@@ -22,9 +22,6 @@ deploy_test:
       - nginx-phpfpm
   script:
     - echo ${PROJECT_NAME} ${COMMIT_BRANCH_NAME} ${PIPELINE_ID}
-    - docker info
-    - pwd
-    - ls -la
     - docker ps
     - docker images
   only:
