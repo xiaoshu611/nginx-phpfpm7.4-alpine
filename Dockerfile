@@ -2,7 +2,7 @@ FROM php:7.3-fpm-alpine
 
 LABEL Maintainer="qiuapeng@vchangyi.com"
 
-ENV XLSWRITER_VERSION=1.3.7
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -13,46 +13,15 @@ RUN apk update \
     && echo "Asia/Shanghai" > /etc/timezone \
     && mkdir -p /run/nginx
 
-# 安装ssh
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
-    && sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config \
-    && ssh-keygen -t dsa -P "" -f /etc/ssh/ssh_host_dsa_key \
-    && ssh-keygen -t rsa -P "" -f /etc/ssh/ssh_host_rsa_key \
-    && ssh-keygen -t ecdsa -P "" -f /etc/ssh/ssh_host_ecdsa_key \
-    && ssh-keygen -t ed25519 -P "" -f /etc/ssh/ssh_host_ed25519_key \
-    && echo "root:changyi" | chpasswd
-
 # 安装依赖库
-RUN apk add --no-cache libstdc++ wget openssl bash supervisor nginx \
-    libmcrypt-dev libzip-dev libpng-dev libc-dev zlib-dev librdkafka-dev \
-    freetype-dev libjpeg-turbo-dev libpng-dev
+RUN apk add --no-cache libstdc++ libzip-dev libpng-dev zlib-dev freetype-dev libjpeg libjpeg-turbo-dev
 
-RUN apk add --no-cache --virtual .build-deps autoconf automake make g++ gcc \
-    libtool dpkg-dev dpkg pkgconf file re2c pcre-dev php7-dev php7-pear openssl-dev \
+RUN apk add --no-cache --virtual .build-deps \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
     # 安装php常用扩展
     && docker-php-ext-install -j$(nproc) gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
-    && wget https://pecl.php.net/get/redis-5.3.4.tgz \
-    && wget https://pecl.php.net/get/mcrypt-1.0.4.tgz \
-    && wget https://pecl.php.net/get/mongodb-1.10.0.tgz \
-    && wget https://pecl.php.net/get/rdkafka-5.0.0.tgz \
-    # Extension redis mcrypt mongodb rdkafka
-    && pecl install redis-5.3.4.tgz mcrypt-1.0.4.tgz mongodb-1.10.0.tgz rdkafka-5.0.0.tgz \
-    && rm -rf redis-5.3.4.tgz mcrypt-1.0.4.tgz mongodb-1.10.0.tgz rdkafka-5.0.0.tgz \
-    && docker-php-ext-enable redis mcrypt mongodb rdkafka \
-    # 安装 Composer
-    && wget https://mirrors.cloud.tencent.com/composer/composer.phar \
-    && mv composer.phar  /usr/local/bin/composer \
-    && chmod +x /usr/local/bin/composer \
+    && install-php-extensions ssh2 redis mcrypt mongodb rdkafka xlswriter @composer \
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
-    # 安装 Writer
-    && wget https://pecl.php.net/get/xlswriter-${XLSWRITER_VERSION}.tgz -O xlswriter.tar.gz \
-    && mkdir -p xlswriter \
-    && tar -xf xlswriter.tar.gz -C xlswriter --strip-components=1 \
-    && rm xlswriter.tar.gz \
-    && cd xlswriter \
-    && phpize && ./configure --enable-reader && make && make install \
-    && docker-php-ext-enable xlswriter \
     # 删除系统扩展
     && apk del .build-deps \
     && rm -rf /var/cache/apk/* /tmp/* /usr/share/man \
