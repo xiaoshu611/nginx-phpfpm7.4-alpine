@@ -19,7 +19,7 @@ RUN apk add --no-cache libstdc++ libzip-dev libpng-dev zlib-dev freetype-dev lib
 RUN apk add --no-cache --virtual .build-deps \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
     # 安装php常用扩展
-    && docker-php-ext-install -j$(nproc) gd bcmath opcache mysqli pdo pdo_mysql sockets zip \
+    && docker-php-ext-install -j$(nproc) gd bcmath opcache mysqli pdo_mysql sockets zip \
     && install-php-extensions ssh2 redis mcrypt mongodb rdkafka xlswriter @composer \
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
     # 删除系统扩展
