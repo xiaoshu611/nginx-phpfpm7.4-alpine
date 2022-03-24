@@ -1,30 +1,33 @@
 stages:
   - build
-  - deploy_test
+  - push
 
 variables:
-  PROJECT_NAME: nginx-phpfpm
-  COMMIT_BRANCH_NAME: ${CI_COMMIT_REF_NAME}
-  PIPELINE_ID: ${CI_PIPELINE_ID}
+  HARBOR_HOST: harbor.vchangyi.com
+  USER_NAME: qiuapeng
+  USER_PASS: DUyP3e6YGoo2TMdMio
+  INAGE_NAMESPACE: library
+  INAGE_NAME: nginx-phpfpm-supervisord
+  IMAGE_ADDRESS: $HARBOR_HOST/$INAGE_NAMESPACE/$INAGE_NAME:${CI_COMMIT_REF_NAME}-${CI_PIPELINE_IID}
 
 build:
   stage: build
   tags:
     - nginx-phpfpm
   script:
-    - echo 构建
-    - pwd
-    - ls -la
+    - docker build -t $IMAGE_ADDRESS .
   only:
     - master
 
 deploy:
-  stage: deploy_test
+  stage: push
   tags:
-      - nginx-phpfpm
+    - nginx-phpfpm
+  before_script:
+    - docker login $HARBOR_HOST -u $USER_NAME -p $USER_PASS
   script:
-    - echo $PROJECT_NAME $COMMIT_BRANCH_NAME $PIPELINE_ID
-    - docker ps
-    - docker images
+    - docker push $IMAGE_ADDRESS
+  after_script:
+    - docker rmi -f $IMAGE_ADDRESS
   only:
     - master
