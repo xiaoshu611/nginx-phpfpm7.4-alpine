@@ -1,6 +1,6 @@
 FROM php:7.3-fpm-alpine
 
-LABEL Maintainer="qiuapeng@vchangyi.com"
+LABEL Maintainer="qiuapeng921@163.com"
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
