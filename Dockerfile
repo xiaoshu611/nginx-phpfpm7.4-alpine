@@ -8,7 +8,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 # 安装常用服务
 RUN apk update \
-    && apk add openssh tzdata supervisor nginx wget bash openssl \
+    && apk add tzdata supervisor nginx wget bash openssl \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && mkdir -p /run/nginx
@@ -41,6 +41,6 @@ COPY index.php /usr/share/nginx/html/src/public/
 
 WORKDIR /usr/share/nginx/html/
 
-EXPOSE 22 80 5921
+EXPOSE 80 5921
 
 ENTRYPOINT ["supervisord","-c","/etc/supervisord.conf"]
