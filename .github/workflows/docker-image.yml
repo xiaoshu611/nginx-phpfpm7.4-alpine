@@ -19,6 +19,15 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      -
+        name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+          run: |
+            echo $RELEASE_VERSION
+            echo ${{ steps.vars.outputs.tag }}
       -
         name: Docker meta
         id: meta
@@ -52,5 +61,5 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ github.ref }}
-          labels: ${{ github.ref }}
+          tags: ${{ steps.vars.outputs.tag }}
+          labels: ${{ steps.vars.outputs.tag }}
