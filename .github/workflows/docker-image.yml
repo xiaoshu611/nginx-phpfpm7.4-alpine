@@ -7,10 +7,16 @@ on:
     branches:
       - "master"
     tags:
-      - "*.*.*"
+      - 'v*'
   pull_request:
     branches:
       - "master"
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: hub.docker.com
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   docker:
@@ -21,21 +27,16 @@ jobs:
 
       - name: Set output
         id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+          echo ${{ steps.vars.outputs.tag }}
+          echo ${{ github.repository }}
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: qiuapeng921/nginx-phpfpm
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
