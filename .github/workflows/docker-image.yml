@@ -24,7 +24,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: qiuapeng921/nginx-phpfpm
+          images: ${{ github.repository_owner }}/${{ github.repository }}
           tags: |
             type=schedule
             type=ref,event=branch
