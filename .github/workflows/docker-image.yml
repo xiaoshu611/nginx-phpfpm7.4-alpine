@@ -52,5 +52,5 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.get_version.outputs.VERSION }}
-          labels: ${{ steps.get_version.outputs.VERSION }}
+          tags: ${{ github.ref }}
+          labels: ${{ github.ref }}
