@@ -4,13 +4,15 @@ LABEL Maintainer="qiuapeng921@163.com"
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# 修复安全漏洞
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories \
+    && apk update \
+    && apk upgrade busybox curl libcrypto1.1 libcurl libretls \
+    libxml2 ncurses-libs ncurses-terminfo-base openssl zlib xz xz-libs libssl1.1
 
 # 安装常用服务
-RUN apk update \
-    && apk add tzdata supervisor nginx wget bash openssl \
+RUN apk add tzdata supervisor nginx wget bash openssl \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo "Asia/Shanghai" > /etc/timezone \
     && mkdir -p /run/nginx
 
 # 安装依赖库
