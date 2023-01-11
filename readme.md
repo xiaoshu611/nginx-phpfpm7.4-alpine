@@ -43,6 +43,7 @@ sodium
 SPL
 sqlite3
 standard
+ssh2
 tokenizer
 xlswriter
 xml
