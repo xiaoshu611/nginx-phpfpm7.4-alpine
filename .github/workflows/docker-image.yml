@@ -33,6 +33,7 @@ jobs:
         run: |
           echo ${{ steps.vars.outputs.tag }}
           echo ${{ github.repository }}
+          echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Docker meta
         id: meta
