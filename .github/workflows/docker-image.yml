@@ -15,6 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: 
-          docker build -t qiuapeng921/nginx-phpfpm:php73-latest -f dockerfiles/php73/Dockerfile .
-          docker build -t qiuapeng921/nginx-phpfpm:php74-latest -f dockerfiles/php74/Dockerfile .
+      run: docker build -t qiuapeng921/nginx-phpfpm:php73-latest -f dockerfiles/php73/Dockerfile . && docker build -t qiuapeng921/nginx-phpfpm:php74-latest -f dockerfiles/php74/Dockerfile .
