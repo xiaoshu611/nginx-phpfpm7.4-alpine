@@ -1,6 +1,6 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.4-fpm-alpine
 
-LABEL Maintainer="qiuapeng921@163.com"
+LABEL Maintainer="xaioshu.611@163.com"
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
@@ -43,6 +43,6 @@ COPY index.php /usr/share/nginx/html/src/public/
 
 WORKDIR /usr/share/nginx/html/
 
-EXPOSE 80 5921
+EXPOSE 80 5922
 
 ENTRYPOINT ["supervisord","-c","/etc/supervisord.conf"]
